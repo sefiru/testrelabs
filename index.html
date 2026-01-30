@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>FastAPI WebSocket Demo</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>WebSocket сообщения</h2>
+
+<form id="form">
+    <input id="message" type="text" autocomplete="off" required>
+    <button type="submit">Отправить</button>
+</form>
+
+<ul id="messages"></ul>
+
+<script>
+    const ws = new WebSocket("ws://" + location.host + "/ws");
+
+    const form = document.getElementById("form");
+    const input = document.getElementById("message");
+    const list = document.getElementById("messages");
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const payload = {
+            text: input.value
+        };
+
+        ws.send(JSON.stringify(payload));
+        input.value = "";
+    });
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        const li = document.createElement("li");
+        li.textContent = `${data.number}. ${data.text}`;
+
+        list.appendChild(li);
+    };
+</script>
+
+</body>
+</html>
